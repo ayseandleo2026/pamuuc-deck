@@ -26,15 +26,14 @@ body text at about 4px. Slide order, wording and colour are unchanged.
 or French string tightens exactly as it does in print. All four languages currently
 fit with zero overflow.
 
-## Deploying
+## Deployed
 
-Any static host works. For GitHub Pages:
+Live at **https://deck.pamuuc-studio.com** (GitHub Pages, branch `main`, root).
 
-```bash
-gh repo create pamuuc-deck --private --source . --push
-```
-
-then Settings → Pages → Deploy from branch → `main` / root.
+`deck.pamuuc-studio.com` is a CNAME to `ayseandleo2026.github.io` in the
+`pamuuc-studio.com` Route 53 zone. The root `CNAME` file is what keeps the custom
+domain attached — **do not delete it**, or the next push drops the site back to
+`ayseandleo2026.github.io/pamuuc-deck/` and the emailed links break.
 
 **Repo visibility matters here.** Every slide is footed "Confidential · Recipient use
 only". On GitHub Free, Pages only publishes from a *public* repo, which would make
