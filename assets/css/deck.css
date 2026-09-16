@@ -1,0 +1,240 @@
+/* PAMUUC Studio — Custom Wardrobe deck
+   Design grid: 1440 x 810. Every desktop value below is in those units,
+   scaled by --u so the slide is a pixel-faithful copy of the PDF at any size. */
+
+@font-face{font-family:Gilmer;src:url(../fonts/Gilmer-Light.woff2) format("woff2"),url(../fonts/Gilmer-Light.woff) format("woff");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:Gilmer;src:url(../fonts/Gilmer-Regular.woff2) format("woff2"),url(../fonts/Gilmer-Regular.woff) format("woff");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:Gilmer;src:url(../fonts/Gilmer-Medium.woff2) format("woff2"),url(../fonts/Gilmer-Medium.woff) format("woff");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:Gilmer;src:url(../fonts/Gilmer-Bold.woff2) format("woff2"),url(../fonts/Gilmer-Bold.woff) format("woff");font-weight:700;font-style:normal;font-display:swap}
+
+:root{
+  --navy:#011251;
+  --off:#F4F2ED;
+  --rule:rgba(1,18,81,.22);
+  --tline:rgba(1,18,81,.42);
+  --bar:rgba(1,18,81,.53);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--navy);
+  font-family:Gilmer,"Helvetica Neue",Arial,sans-serif;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%}
+
+/* ---------- deck shell ---------- */
+.slides{
+  height:100vh;height:100svh;
+  overflow-y:auto;overflow-x:hidden;
+  scroll-snap-type:y mandatory;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+.slide{
+  position:relative;
+  width:100%;
+  height:100vh;height:100svh;
+  display:flex;align-items:center;justify-content:center;
+  scroll-snap-align:start;scroll-snap-stop:always;
+  overflow:hidden;
+}
+.slide.navy{background:var(--navy)}
+.slide.off{background:var(--off)}
+
+.stage{
+  --u:calc(min(100vw, 100svh * 16 / 9) / 1440);
+  position:relative;
+  width:calc(1440 * var(--u));
+  height:calc(810 * var(--u));
+  overflow:hidden;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+}
+@supports not (height:100svh){ .stage{--u:calc(min(100vw, 100vh * 16 / 9) / 1440)} }
+
+.s1 .stage{background-image:url(../img/p1.jpg)}
+.s3 .stage{background-image:url(../img/p3.jpg)}
+.s5 .stage{background-image:url(../img/p5.jpg)}
+.s7 .stage{background-image:url(../img/p7.jpg)}
+
+/* ---------- text boxes ---------- */
+.b{
+  position:absolute;
+  left:calc(var(--x) * var(--u));
+  top:calc((var(--y) - (var(--lh) - var(--fs)) / 2) * var(--u));
+  width:calc(var(--w) * var(--u));
+  font-size:calc(var(--fs) * var(--u));
+  line-height:calc(var(--lh) * var(--u));
+  letter-spacing:calc(var(--tk, 0) * 1em);
+  margin:0;
+}
+.c-navy{color:var(--navy)}
+.c-off{color:var(--off)}
+.c-white{color:#fff}
+.w300{font-weight:300}
+.w400{font-weight:400}
+.w500{font-weight:500}
+.w700{font-weight:700}
+.ta-right{text-align:right}
+.ta-center{text-align:center}
+.b--footer{opacity:.62}
+.b--email a,.b--phone a,.b--url a{
+  color:inherit;text-decoration:none;
+  border-bottom:1px solid transparent;transition:border-color .2s ease;
+}
+.b--email a:hover,.b--url a:hover,.b--email a:focus-visible,.b--url a:focus-visible{
+  border-bottom-color:currentColor;
+}
+.b--wordmark{letter-spacing:.02em}
+
+/* ---------- vector furniture ---------- */
+.decor{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.decor .rule{fill:var(--rule)}
+.decor .tline{fill:var(--tline)}
+.decor .dot circle{fill:var(--navy)}
+.decor .bar rect{fill:var(--bar)}
+.decor .tri polygon{fill:var(--navy)}
+.decor .cue{fill:rgba(255,255,255,.64)}
+
+.b--logo{
+  position:absolute;
+  left:calc(96 * var(--u));
+  top:calc(64.06 * var(--u));
+  width:calc(27.47 * var(--u));
+  height:calc(27.37 * var(--u));
+  color:#fff;
+}
+.b--logo .mark{display:block;width:100%;height:100%}
+
+.photo{display:none}
+
+/* ---------- chrome ---------- */
+.chrome{
+  position:fixed;top:0;right:0;z-index:30;
+  display:flex;align-items:center;gap:14px;
+  padding:18px 22px;
+  font-size:12px;letter-spacing:.06em;
+  transition:opacity .35s ease;
+}
+.chrome a{
+  color:currentColor;text-decoration:none;opacity:.55;
+  padding:4px 2px;transition:opacity .2s ease;
+}
+.chrome a:hover,.chrome a:focus-visible{opacity:1}
+.chrome a.on{opacity:1;text-decoration:underline;text-underline-offset:4px}
+.langs{display:flex;gap:10px}
+.dl{
+  padding:4px 10px !important;
+  border:1px solid currentColor;border-radius:999px;
+  opacity:.45 !important;
+}
+.dl:hover,.dl:focus-visible{opacity:1 !important}
+body[data-tone="dark"] .chrome{color:#fff}
+body[data-tone="light"] .chrome{color:var(--navy)}
+body.scrolling .chrome{opacity:.25}
+
+@media (prefers-reduced-motion:reduce){
+  .slides{scroll-behavior:auto}
+  .chrome{transition:none}
+}
+
+/* =====================================================================
+   Mobile / narrow: the slides reflow instead of shrinking to nothing.
+   ===================================================================== */
+@media (max-width:900px){
+  .slides{height:auto;overflow:visible;scroll-snap-type:none}
+  .slide{height:auto;min-height:0;display:block;overflow:visible}
+  .stage{
+    --u:1px;
+    position:static;
+    width:100%;height:auto;
+    display:flex;flex-direction:column;
+    padding:44px 24px 40px;
+    background-image:none !important;
+  }
+  .decor{display:none}
+
+  .b{
+    position:static;
+    width:auto;left:auto;top:auto;
+    font-size:inherit;line-height:inherit;letter-spacing:normal;
+    max-width:36em;
+    order:var(--ord,0);
+  }
+
+  .photo{
+    display:block;order:-2;
+    width:100vw;margin:-44px -24px 26px;
+    background-size:cover;background-position:center;
+    background-color:rgba(1,18,81,.25);
+  }
+  /* each banner keeps its own crop's proportions, capped so it never
+     pushes the headline off a short screen */
+  .s1 .photo{background-image:url(../img/p1-sm.jpg);aspect-ratio:1382/718}
+  .s3 .photo{background-image:url(../img/p3-sm.jpg);aspect-ratio:625/810;max-height:46svh}
+  .s5 .photo{background-image:url(../img/p5-sm.jpg);aspect-ratio:627/810;max-height:46svh;background-position:60% center}
+  .s7 .photo{display:none}
+  .s7 .stage{
+    background-image:url(../img/p7-sm.jpg) !important;
+    min-height:82svh;justify-content:flex-start;
+    background-color:var(--navy);
+  }
+
+  /* flow order */
+  .b--wordmark{font-size:15px;line-height:1.2;margin-bottom:30px}
+  .b--logo{position:static;width:26px;height:26px;margin-bottom:14px}
+  .b--kicker{font-size:12px;line-height:1.3;letter-spacing:.05em;opacity:.7;margin-bottom:12px}
+  .b--title{font-size:clamp(30px,8.4vw,52px);line-height:1.08;letter-spacing:-.005em;margin-bottom:20px}
+  .b--sub{font-size:clamp(16px,4.3vw,19px);line-height:1.45;margin-bottom:10px}
+  .b--lead{font-size:18px;line-height:1.45;margin-bottom:22px}
+  .b--body{font-size:16px;line-height:1.55;margin-bottom:10px}
+  .b--number{font-size:12px;line-height:1.2;opacity:.55;margin:22px 0 6px}
+  .b--heading{font-size:18px;line-height:1.3;margin:20px 0 7px}
+  .b--steptitle{font-size:18px;line-height:1.3;margin:0 0 7px}
+  .b--bullet{font-size:16px;line-height:1.4;padding-left:14px;border-left:2px solid var(--bar);margin-bottom:14px}
+  .b--note{font-size:13px;line-height:1.5;opacity:.75;margin-top:26px}
+  .b--bottom{font-size:17px;line-height:1.45;margin-top:26px}
+  .b--marquee{font-size:10px;line-height:1.5;letter-spacing:.05em;opacity:.65;margin-top:30px}
+  .b--sectors{font-size:14px;line-height:1.5;text-align:left;margin-top:auto;padding-top:34px}
+  .b--name{font-size:16px;line-height:1.3;text-align:left;margin-top:34px}
+  .b--role{font-size:13px;line-height:1.45;text-align:left;opacity:.8;margin-bottom:14px}
+  .b--email{font-size:14px;line-height:1.5;text-align:left}
+  .b--phone{font-size:14px;line-height:1.5;text-align:left;opacity:.85}
+  .b--url{font-size:14px;line-height:1.5;text-align:left}
+  .b--footer{font-size:10px;line-height:1.45;opacity:.55;margin-top:32px;max-width:none}
+
+  /* slide 3 / 6 heading+body pairs read better tightened up */
+  .s3 .b--body,.s6 .b--body{margin-bottom:4px}
+
+  .chrome{
+    padding:12px 14px;font-size:11px;gap:10px;
+    width:100%;justify-content:flex-end;
+  }
+  /* the chrome sits over a photo on some slides — give it something to sit on */
+  .chrome::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:linear-gradient(to bottom,rgba(1,18,81,.55),rgba(1,18,81,0));
+  }
+  body[data-tone="light"] .chrome::before{
+    background:linear-gradient(to bottom,rgba(244,242,237,.92),rgba(244,242,237,0));
+  }
+  body.scrolling .chrome{opacity:1}
+
+  /* hard line breaks from the print layout flow naturally at phone width */
+  .b br.lb{display:none}
+  .b--role br.lb{display:inline}   /* job title and company stay on separate lines */
+
+  /* the confidentiality line belongs on the deck, but not eight times in one scroll */
+  .s2 .b--footer,.s3 .b--footer,.s4 .b--footer,
+  .s5 .b--footer,.s6 .b--footer,.s7 .b--footer{display:none}
+}
+
+@media (max-width:900px) and (prefers-color-scheme:dark){
+  /* the deck is brand-coloured in both schemes; nothing to invert */
+}
