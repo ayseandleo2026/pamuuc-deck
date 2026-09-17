@@ -121,6 +121,28 @@ def nav_html(lang):
             f'<a class="dl" href="{html.escape(pdf)}" download>{label}</a>'
             "</nav>")
 
+GA_ID = "G-HS8HYY7LV1"
+
+CONSENT = {
+    "en": ("We use analytics to understand how this presentation is read. "
+           "Nothing is collected until you accept.", "Accept", "Decline"),
+    "es": ("Usamos analítica para entender cómo se lee esta presentación. "
+           "No se recoge nada hasta que aceptes.", "Aceptar", "Rechazar"),
+    "fr": ("Nous utilisons des statistiques pour comprendre comment cette présentation est consultée. "
+           "Rien n\u2019est collecté avant votre accord.", "Accepter", "Refuser"),
+    "it": ("Usiamo strumenti di analisi per capire come viene letta questa presentazione. "
+           "Non raccogliamo nulla prima del tuo consenso.", "Accetta", "Rifiuta"),
+}
+
+def consent_html(lang):
+    text, yes, no = CONSENT[lang]
+    return ('<div class="consent" data-consent hidden role="dialog" aria-live="polite">'
+            f'<p>{esc(text)}</p>'
+            '<div class="consent-actions">'
+            f'<button type="button" data-consent-action="denied">{esc(no)}</button>'
+            f'<button type="button" data-consent-action="granted" class="primary">{esc(yes)}</button>'
+            "</div></div>")
+
 TITLE = {
     "en": "PAMUUC Studio — Custom Wardrobe",
     "es": "PAMUUC Studio — Vestuario a medida",
@@ -148,13 +170,15 @@ def page_html(lang):
 <meta property="og:image" content="../assets/img/share.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#011251">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com; upgrade-insecure-requests">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/Gilmer-Light.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/Gilmer-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/css/deck.css">
 </head>
-<body class="deck">
+<body class="deck" data-ga="{GA_ID}" data-lang="{lang}">
 {nav_html(lang)}
+{consent_html(lang)}
 <main class="slides">
 {chr(10).join(slides)}
 </main>

@@ -52,6 +52,91 @@
     resizeTimer = setTimeout(fitAll, 120);
   });
 
+
+  /* ---- consent-gated analytics --------------------------------------
+     Mirrors pamuuc-studio.com: no request leaves the page until the
+     visitor opts in. Slide depth is sent as a custom event because the
+     deck scrolls inside a container, so GA's built-in scroll tracking
+     never fires. */
+  var CONSENT_KEY = "pamuuc-consent";
+  var bar = document.querySelector("[data-consent]");
+  var pending = [];
+  var gaOn = false;
+
+  function loadAnalytics() {
+    var id = document.body.dataset.ga;
+    if (gaOn || !id) return;
+    gaOn = true;
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + id;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    gtag("js", new Date());
+    gtag("config", id, {
+      anonymize_ip: true,
+      page_title: "Custom Wardrobe — " + (document.body.dataset.lang || "").toUpperCase()
+    });
+    pending.splice(0).forEach(function (e) { gtag("event", e[0], e[1]); });
+  }
+
+  function track(name, params) {
+    params = params || {};
+    params.deck_language = document.body.dataset.lang || "";
+    if (gaOn && window.gtag) { window.gtag("event", name, params); }
+    else if (pending.length < 40) { pending.push([name, params]); }
+  }
+
+  var stored = null;
+  try { stored = localStorage.getItem(CONSENT_KEY); } catch (e) {}
+  if (stored === "granted") loadAnalytics();
+
+  if (bar) {
+    if (!stored) {
+      // hold the prompt back until the reader is past the cover, so the
+      // first impression is the deck and not a consent dialog
+      var reveal = function () { bar.hidden = false; };
+      if ("IntersectionObserver" in window && slides[1]) {
+        var ro = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) { reveal(); ro.disconnect(); } });
+        }, { threshold: 0.3 });
+        ro.observe(slides[1]);
+      } else {
+        setTimeout(reveal, 6000);
+      }
+    }
+    bar.addEventListener("click", function (e) {
+      var act = e.target.closest("[data-consent-action]");
+      if (!act) return;
+      var v = act.dataset.consentAction;
+      try { localStorage.setItem(CONSENT_KEY, v); } catch (err) {}
+      if (v === "granted") loadAnalytics();
+      else pending.length = 0;
+      bar.hidden = true;
+    });
+  }
+
+  /* the three things worth knowing about a prospect */
+  var deepest = 0;
+  function reportSlide(index) {
+    var n = index + 1;
+    if (n <= deepest) return;
+    deepest = n;
+    track("slide_view", { slide_number: n });
+  }
+
+  document.addEventListener("click", function (e) {
+    var dl = e.target.closest(".dl");
+    if (dl) { track("pdf_download", {}); return; }
+    var link = e.target.closest(".b--email a, .b--phone a, .b--url a");
+    if (link) {
+      var kind = link.closest(".b--email") ? "email"
+               : link.closest(".b--phone") ? "phone" : "website";
+      track("contact_click", { contact_method: kind });
+    }
+  });
+
   /* ---- chrome tone + current slide ---------------------------------- */
   var current = 0;
   function setTone(index) {
@@ -66,6 +151,7 @@
         if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
           current = slides.indexOf(entry.target);
           setTone(current);
+          reportSlide(current);
         }
       });
     }, { threshold: [0.5, 0.75] });
