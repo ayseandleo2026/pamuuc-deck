@@ -241,11 +241,13 @@ body.scrolling .chrome{opacity:.25}
 
 /* =====================================================================
    Consent bar — nothing is sent to Google until this is accepted.
-   Held back until the reader is past the cover slide.
+   Accept is the primary action; Decline stays a legible, full-size
+   control, because consent that is harder to refuse than to give is
+   not valid consent and would invalidate the data collected.
    ===================================================================== */
 .consent{
   position:fixed;left:0;right:0;bottom:0;z-index:40;
-  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:28px;
   padding:16px 22px;
   background:#011251;color:#F4F2ED;
   border-top:1px solid rgba(244,242,237,.30);
@@ -254,31 +256,43 @@ body.scrolling .chrome{opacity:.25}
   animation:consent-in .32s ease both;
 }
 .consent[hidden]{display:none}
-.consent p{margin:0;max-width:64ch}
-.consent-actions{display:flex;gap:10px;flex-shrink:0}
+.consent-text{max-width:74ch}
+.consent p{margin:0}
+.consent-links{margin-top:5px;display:flex;flex-wrap:wrap;column-gap:9px;row-gap:2px;align-items:baseline;font-size:12px}
+.consent-links a{color:#F4F2ED;opacity:.72;text-decoration:underline;text-underline-offset:3px}
+.consent-links a:hover,.consent-links a:focus-visible{opacity:1}
+.consent-links span{opacity:.45}
+
+.consent-actions{display:flex;align-items:center;gap:18px;flex-shrink:0}
 .consent button{
-  font:inherit;font-weight:500;letter-spacing:.04em;
-  padding:9px 18px;border-radius:999px;cursor:pointer;
-  background:transparent;color:#F4F2ED;
-  border:1px solid rgba(244,242,237,.45);
-  transition:background .2s ease,color .2s ease,border-color .2s ease;
+  font:inherit;cursor:pointer;
+  min-height:44px;                   /* keeps both controls tappable */
+  transition:background .2s ease,color .2s ease,border-color .2s ease,opacity .2s ease;
 }
-.consent button:hover,.consent button:focus-visible{
-  border-color:#F4F2ED;
+.consent button.secondary{
+  background:none;border:0;padding:0 2px;
+  color:#F4F2ED;opacity:.72;
+  font-size:13px;text-decoration:underline;text-underline-offset:3px;
 }
-.consent button.primary{background:#F4F2ED;color:#011251;border-color:#F4F2ED}
-.consent button.primary:hover,.consent button.primary:focus-visible{
-  background:#fff;border-color:#fff;
+.consent button.secondary:hover,.consent button.secondary:focus-visible{opacity:1}
+.consent button.primary{
+  background:#F4F2ED;color:#011251;
+  border:1px solid #F4F2ED;border-radius:999px;
+  padding:11px 30px;
+  font-weight:500;font-size:14px;letter-spacing:.04em;
 }
+.consent button.primary:hover,.consent button.primary:focus-visible{background:#fff;border-color:#fff}
 @keyframes consent-in{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){ .consent{animation:none} }
 
 @media (max-width:900px){
   .consent{
-    flex-direction:column;align-items:stretch;gap:14px;
+    flex-direction:column;align-items:stretch;gap:16px;
     padding:18px 20px calc(18px + env(safe-area-inset-bottom));
-    font-size:13px;
   }
-  .consent-actions{justify-content:stretch}
-  .consent button{flex:1;padding:12px 16px}
+  .consent-links span{display:none}
+  .consent-links{column-gap:16px}
+  .consent-actions{justify-content:space-between;gap:16px}
+  .consent button.primary{flex:1;padding:13px 24px}
+  .consent button.secondary{flex:0 0 auto;padding:0 6px}
 }

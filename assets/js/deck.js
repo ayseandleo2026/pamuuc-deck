@@ -94,18 +94,29 @@
 
   if (bar) {
     if (!stored) {
-      // hold the prompt back until the reader is past the cover, so the
-      // first impression is the deck and not a consent dialog
-      var reveal = function () { bar.hidden = false; };
-      if ("IntersectionObserver" in window && slides[1]) {
-        var ro = new IntersectionObserver(function (es) {
-          es.forEach(function (e) { if (e.isIntersecting) { reveal(); ro.disconnect(); } });
-        }, { threshold: 0.3 });
-        ro.observe(slides[1]);
-      } else {
-        setTimeout(reveal, 6000);
-      }
+      // Hold the prompt back until the reader is past the cover, then show it
+      // no matter how they got there. An IntersectionObserver alone is not
+      // enough: a fast fling or a programmatic jump can carry slide 2 from
+      // below the viewport to above it without ever sampling an intersecting
+      // frame, and the banner would never appear.
+      var revealed = false;
+      var reveal = function () {
+        if (revealed) return;
+        revealed = true;
+        bar.hidden = false;
+        window.removeEventListener("scroll", onScroll);
+        deck.removeEventListener("scroll", onScroll);
+      };
+      var onScroll = function () {
+        var y = deck.scrollTop || window.scrollY || window.pageYOffset || 0;
+        if (y > window.innerHeight * 0.5) reveal();
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      deck.addEventListener("scroll", onScroll, { passive: true });
+      setTimeout(reveal, 12000);   // and show it anyway if they never scroll
+      onScroll();
     }
+
     bar.addEventListener("click", function (e) {
       var act = e.target.closest("[data-consent-action]");
       if (!act) return;

@@ -124,24 +124,53 @@ def nav_html(lang):
 GA_ID = "G-HS8HYY7LV1"
 
 CONSENT = {
-    "en": ("We use analytics to understand how this presentation is read. "
-           "Nothing is collected until you accept.", "Accept", "Decline"),
-    "es": ("Usamos analítica para entender cómo se lee esta presentación. "
-           "No se recoge nada hasta que aceptes.", "Aceptar", "Rechazar"),
-    "fr": ("Nous utilisons des statistiques pour comprendre comment cette présentation est consultée. "
-           "Rien n\u2019est collecté avant votre accord.", "Accepter", "Refuser"),
-    "it": ("Usiamo strumenti di analisi per capire come viene letta questa presentazione. "
-           "Non raccogliamo nulla prima del tuo consenso.", "Accetta", "Rifiuta"),
+    "en": {
+        "text": "We use cookies and analytics to understand how this presentation is read. "
+                "Nothing is collected until you accept.",
+        "yes": "Accept", "no": "Decline",
+        "privacy": "Privacy policy", "cookies": "Cookie policy",
+        "label": "Cookie consent",
+    },
+    "es": {
+        "text": "Usamos cookies y analítica para entender cómo se lee esta presentación. "
+                "No se recoge nada hasta que aceptes.",
+        "yes": "Aceptar", "no": "Rechazar",
+        "privacy": "Política de privacidad", "cookies": "Política de cookies",
+        "label": "Consentimiento de cookies",
+    },
+    "fr": {
+        "text": "Nous utilisons des cookies et des statistiques pour comprendre comment cette "
+                "présentation est consultée. Rien n\u2019est collecté avant votre accord.",
+        "yes": "Accepter", "no": "Refuser",
+        "privacy": "Politique de confidentialité", "cookies": "Politique relative aux cookies",
+        "label": "Consentement aux cookies",
+    },
+    "it": {
+        "text": "Usiamo cookie e strumenti di analisi per capire come viene letta questa "
+                "presentazione. Non raccogliamo nulla prima del tuo consenso.",
+        "yes": "Accetta", "no": "Rifiuta",
+        "privacy": "Informativa sulla privacy", "cookies": "Informativa sui cookie",
+        "label": "Consenso ai cookie",
+    },
 }
 
+LEGAL = "https://pamuuc-studio.com/legal/"
+
 def consent_html(lang):
-    text, yes, no = CONSENT[lang]
-    return ('<div class="consent" data-consent hidden role="dialog" aria-live="polite">'
-            f'<p>{esc(text)}</p>'
-            '<div class="consent-actions">'
-            f'<button type="button" data-consent-action="denied">{esc(no)}</button>'
-            f'<button type="button" data-consent-action="granted" class="primary">{esc(yes)}</button>'
-            "</div></div>")
+    c = CONSENT[lang]
+    return (
+        f'<div class="consent" data-consent hidden role="dialog" aria-label="{esc(c["label"])}">'
+        '<div class="consent-text">'
+        f'<p>{esc(c["text"])}</p>'
+        '<p class="consent-links">'
+        f'<a href="{LEGAL}#privacy" target="_blank" rel="noopener">{esc(c["privacy"])}</a>'
+        '<span aria-hidden="true">·</span>'
+        f'<a href="{LEGAL}#cookies" target="_blank" rel="noopener">{esc(c["cookies"])}</a>'
+        '</p></div>'
+        '<div class="consent-actions">'
+        f'<button type="button" data-consent-action="denied" class="secondary">{esc(c["no"])}</button>'
+        f'<button type="button" data-consent-action="granted" class="primary">{esc(c["yes"])}</button>'
+        '</div></div>')
 
 TITLE = {
     "en": "PAMUUC Studio — Custom Wardrobe",
